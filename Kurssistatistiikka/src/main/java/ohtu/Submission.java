@@ -6,6 +6,7 @@ public class Submission {
     private int week;
     private int hours;
     private ArrayList<Integer> exercises;
+    private int maxExerciseAmount;
 
     public void setWeek(int week) {
         this.week = week;
@@ -31,9 +32,19 @@ public class Submission {
 		this.hours = hours;
 	}
 
+	
+	
+	public int getMaxExerciseAmount() {
+		return maxExerciseAmount;
+	}
+
+	public void setMaxExerciseAmount(int maxExerciseAmount) {
+		this.maxExerciseAmount = maxExerciseAmount;
+	}
+
 	@Override
     public String toString() {
-        return "Viikko "+week + ": tehtyjä tehtäviä yhteensä: " + exercises.size() + ", aikaa kului "+ hours +" tuntia, tehdyt tehtävät: "+exercises;
+        return "Viikko "+week + ": tehtyjä tehtäviä yhteensä: " + exercises.size() + " (maksimi " + maxExerciseAmount + "), aikaa kului "+ hours +" tuntia, tehdyt tehtävät: "+exercises;
     }
     
 }

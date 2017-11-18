@@ -20,8 +20,18 @@ public class Main {
         Gson mapper = new Gson();
         Submission[] subs = mapper.fromJson(bodyText, Submission[].class);
         
-        System.out.println("opiskelijanumero: " + studentNr);
-        System.out.println("\nOliot:");
+        String infoUrl = "https://studies.cs.helsinki.fi/ohtustats/courseinfo";
+
+        String info = Request.Get(infoUrl).execute().returnContent().asString();
+
+        Course course = mapper.fromJson(info, Course.class);
+        
+        for(int i = 0; i < subs.length; i++) {
+        	subs[i].setMaxExerciseAmount(course.getExercises().get(i));
+        }
+        
+        System.out.println(course + "\n");
+        System.out.println("opiskelijanumero: " + studentNr + "\n");
         int exAmount = 0;
         int totalHours = 0;
         for (Submission submission : subs) {
