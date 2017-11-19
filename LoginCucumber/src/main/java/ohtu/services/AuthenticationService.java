@@ -6,15 +6,22 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import ohtu.data_access.UserDao;
 
+@Component
 public class AuthenticationService {
 
+	@Autowired
     private UserDao userDao;
 
     public AuthenticationService(UserDao userDao) {
         this.userDao = userDao;
     }
+    
+    public AuthenticationService() {}
 
     public boolean logIn(String username, String password) {
         for (User user : userDao.listAll()) {
