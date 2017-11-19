@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import org.apache.http.client.fluent.Request;
 
 public class Main {
-	
-	private static Course course;
 
     public static void main(String[] args) throws IOException {
         // vaihda oma opiskelijanumerosi seuraavaan, ÄLÄ kuitenkaan laita githubiin omaa opiskelijanumeroasi
@@ -31,7 +29,7 @@ public class Main {
 
         String info = Request.Get(infoUrl).execute().returnContent().asString();
 
-        course = mapper.fromJson(info, Course.class);
+        Course course = mapper.fromJson(info, Course.class);
         
         String  statsUrl = "https://studies.cs.helsinki.fi/ohtustats/stats";
         String stats = Request.Get(statsUrl).execute().returnContent().asString();

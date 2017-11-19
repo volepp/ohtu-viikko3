@@ -44,7 +44,8 @@ public class Submission {
 
 	@Override
     public String toString() {
-        return "Viikko "+week + ": tehtyjä tehtäviä yhteensä: " + exercises.size() + " (maksimi " + maxExerciseAmount + "), aikaa kului "+ hours +" tuntia, tehdyt tehtävät: "+exercises;
+        return "Viikko "+week + ": tehtyjä tehtäviä yhteensä: " + exercises.size() 
+        + " (maksimi " + maxExerciseAmount + "), aikaa kului "+ hours +" tuntia, tehdyt tehtävät: "+exercises;
     }
     
 }
