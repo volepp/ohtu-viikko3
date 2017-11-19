@@ -5,13 +5,17 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import static org.junit.Assert.*;
+
+import java.util.Random;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 public class Stepdefs {
-    WebDriver driver = new ChromeDriver();
+    WebDriver driver = new HtmlUnitDriver();
     String baseUrl = "http://localhost:4567";
     
     @Given("^login is selected$")
@@ -20,6 +24,13 @@ public class Stepdefs {
         WebElement element = driver.findElement(By.linkText("login"));       
         element.click();          
     } 
+    
+    @Given("^command new user is selected$")
+    public void command_new_user_is_selected() throws Throwable {
+        driver.get(baseUrl);
+        WebElement element = driver.findElement(By.linkText("register new user"));
+        element.click();
+    }
 
     @When("^username \"([^\"]*)\" and password \"([^\"]*)\" are given$")
     public void username_and_password_are_given(String username, String password) throws Throwable {
@@ -62,6 +73,41 @@ public class Stepdefs {
         pageHasContent("Give your credentials to login");
     }     
     
+    @When("^a valid username \"([^\"]*)\" and password \"([^\"]*)\" and matching password confirmation are entered$")
+    public void a_valid_username_and_password_and_matching_password_confirmation_are_entered(String username, String password) throws Throwable {
+    	createUserWith(username, password, password);
+    }
+
+    @Then("^a new user is created$")
+    public void a_new_user_is_created() throws Throwable {
+    	pageHasContent("Welcome to Ohtu Application!");
+    }
+
+    @When("^an invalid username \"([^\"]*)\" and valid password \"([^\"]*)\" and matching password confirmation are entered$")
+    public void an_invalid_username_and_valid_password_and_matching_password_confirmation_are_entered(String username, String password) throws Throwable {
+        createUserWith(username, password, password);
+    }
+
+    @Then("^user is not created and error \"([^\"]*)\" is reported$")
+    public void user_is_not_created_and_error_is_reported(String error) throws Throwable {
+        pageHasContent(error);
+    }
+
+    @When("^a valid username \"([^\"]*)\" and invalid password \"([^\"]*)\" and matching password confirmation are entered$")
+    public void a_valid_username_and_invalid_password_and_matching_password_confirmation_are_entered(String username, String password) throws Throwable {
+        createUserWith(username, password, password);
+    }
+
+    @When("^an already taken username \"([^\"]*)\" and a valid password \"([^\"]*)\" and matching password confirmation are entered$")
+    public void an_already_taken_username_and_a_valid_password_and_matching_password_confirmation_are_entered(String username, String password) throws Throwable {
+        createUserWith(username, password, password);
+    }
+    
+    @When("^a valid username \"([^\"]*)\" and a valid password \"([^\"]*)\" are password confirmation \"([^\"]*)\" are entered$")
+    public void a_valid_username_and_a_valid_password_are_password_confirmation_are_entered(String username, String password, String passwordConfirmation) throws Throwable {
+        createUserWith(username, password, passwordConfirmation);
+    }
+    
     @After
     public void tearDown(){
         driver.quit();
@@ -82,4 +128,16 @@ public class Stepdefs {
         element = driver.findElement(By.name("login"));
         element.submit();  
     } 
+    
+    private void createUserWith(String username, String password, String passwordConfirmation) {
+    	assertTrue(driver.getPageSource().contains("Create username and give password"));
+    	WebElement element = driver.findElement(By.name("username"));
+        element.sendKeys(username);
+        element = driver.findElement(By.name("password"));
+        element.sendKeys(password);
+        element = driver.findElement(By.name("passwordConfirmation"));
+        element.sendKeys(passwordConfirmation);
+        element = driver.findElement(By.name("signup"));
+        element.submit();  
+    }
 }
