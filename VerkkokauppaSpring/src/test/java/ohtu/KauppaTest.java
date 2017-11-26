@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import ohtu.verkkokauppa.*;
 
-public class PankkiTest {
+public class KauppaTest {
 
 	Pankki pankki;
 	Viitegeneraattori viite;
@@ -84,5 +84,60 @@ public class PankkiTest {
 		kauppa.tilimaksu("pekka", "12345");
 		
 		verify(pankki).tilisiirto(eq("pekka"), eq(42), eq("12345"), eq("33333-44455"),eq(5));
+	}
+	
+	@Test
+	public void ostostenAloittaminenNollaaEdellisenOstoksen() {
+		when(viite.uusi()).thenReturn(42);
+	    
+	    when(varasto.saldo(1)).thenReturn(10); 
+	    when(varasto.haeTuote(1)).thenReturn(new Tuote(1, "maito", 5)); 
+	    
+	    kauppa.aloitaAsiointi();
+	    kauppa.lisaaKoriin(1);
+	    kauppa.tilimaksu("pekka", "12345");
+	    
+	    kauppa.aloitaAsiointi();
+	    kauppa.lisaaKoriin(1);
+	    kauppa.tilimaksu("pekka", "12345");
+	    
+	    verify(pankki, times(2)).tilisiirto(eq("pekka"), eq(42), eq("12345"), eq("33333-44455"),eq(5));
+	}
+	
+	@Test
+	public void jokaiselleMaksutapahtumalleOmaViite() {
+		when(viite.uusi()).thenReturn(42);
+	    
+	    when(varasto.saldo(1)).thenReturn(10); 
+	    when(varasto.haeTuote(1)).thenReturn(new Tuote(1, "maito", 5)); 
+	    
+	    kauppa.aloitaAsiointi();
+	    kauppa.lisaaKoriin(1);
+	    kauppa.tilimaksu("pekka", "12345");
+	    
+	    when(viite.uusi()).thenReturn(24);
+	    
+	    kauppa.aloitaAsiointi();
+	    kauppa.lisaaKoriin(1);
+	    kauppa.tilimaksu("pekka", "12345");
+	    
+	    verify(pankki, times(1)).tilisiirto(eq("pekka"), eq(42), eq("12345"), eq("33333-44455"),eq(5));
+	    verify(pankki, times(1)).tilisiirto(eq("pekka"), eq(24), eq("12345"), eq("33333-44455"),eq(5));
+	}
+	
+	@Test
+	public void koristaPoistaminenToimiiOikein() {
+		when(viite.uusi()).thenReturn(42);
+	    
+		Tuote t = new Tuote(1, "maito", 5);
+		
+	    when(varasto.saldo(1)).thenReturn(1); 
+	    when(varasto.haeTuote(1)).thenReturn(t); 
+	    
+	    kauppa.aloitaAsiointi();
+	    kauppa.lisaaKoriin(1);
+	    kauppa.poistaKorista(1);
+	    
+	    verify(varasto).palautaVarastoon(eq(t));
 	}
 }
